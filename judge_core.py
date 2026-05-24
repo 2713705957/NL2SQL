@@ -8,11 +8,16 @@ import sqlite3
 import re
 from typing import Any
 
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 
 from nl2sql_loader import get_db_connection
 
-llm = ChatOllama(model="qwen2.5:7b", temperature=0.3)
+llm = ChatOpenAI(
+    model="kimi-k2.6",              
+    api_key="sk-UxUGtzMoxteqxA748vLW7gQta1jk7R8br5Und36RH9Qo05bD",
+    base_url="https://api.moonshot.cn/v1",
+    temperature=1
+)
 
 # ---------- 安全执行 ----------
 

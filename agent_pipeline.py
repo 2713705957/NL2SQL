@@ -1,6 +1,6 @@
 from typing import TypedDict
 from langgraph.graph import StateGraph, START, END
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 
 class SQLGradingState(TypedDict):
     """SQL 生成流水线状态"""
@@ -9,7 +9,13 @@ class SQLGradingState(TypedDict):
     generated_sql: str
 
 
-llm = ChatOllama(model="qwen2.5:7b", temperature=0.3)
+llm = ChatOpenAI(
+    model="kimi-k2.6",              
+    api_key="sk-UxUGtzMoxteqxA748vLW7gQta1jk7R8br5Und36RH9Qo05bD",
+    base_url="https://api.moonshot.cn/v1",
+    temperature=1
+)
+
 
 
 def _build_schema_text(table_schema: dict) -> str:

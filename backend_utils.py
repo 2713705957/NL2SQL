@@ -14,8 +14,8 @@ from PIL import Image
 
 import gradio as gr
 from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_ollama import ChatOllama
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
@@ -34,7 +34,12 @@ vectorstore = Chroma(
     collection_name="course_knowledge"
 )
 
-llm = ChatOllama(model="qwen2.5:7b", temperature=0.3)
+llm = ChatOpenAI(
+    model="kimi-k2.6",              
+    api_key="sk-UxUGtzMoxteqxA748vLW7gQta1jk7R8br5Und36RH9Qo05bD",
+    base_url="https://api.moonshot.cn/v1",
+    temperature=1
+)
 
 vision_client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
 
