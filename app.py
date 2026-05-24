@@ -19,13 +19,7 @@ from nl2sql_loader import (
 from judge_core import safe_execute_sql, build_follow_up_prompt
 
 # ---------- 状态 ----------
-_state = {
-    "random_indices": [],
-    "questions": {},
-    "current_qid": None,
-    "current_user_sql": "",
-    "previous_feedback": "",
-}
+_state = {}
 
 
 def _refresh_questions():
@@ -173,9 +167,10 @@ def _submit_judge(option_index: int, user_sql: str):
 
 
 def _follow_up(follow_up_question: str):
-    """追问。"""
+    """追问（流式累积输出）。"""
     if not follow_up_question.strip():
-        return "⚠️ 请输入追问内容"
+        yield "⚠️ 请输入追问内容"
+        return
     qinfo = _state["questions"].get(_state.get("current_qid"), {})
     user_sql = _state.get("current_user_sql", "")
     prev_fb = _state.get("previous_feedback", "")
@@ -189,10 +184,12 @@ def _follow_up(follow_up_question: str):
     )
     try:
         from backend_utils import llm
-        response = llm.invoke(prompt)
-        return response.content
+        accumulated = ""
+        for chunk in llm.stream(prompt):
+            accumulated += chunk.content
+            yield accumulated
     except Exception as e:
-        return f"❌ 追问回答出错：{e}"
+        yield f"❌ 追问回答出错：{e}"
 
 
 def _reset():

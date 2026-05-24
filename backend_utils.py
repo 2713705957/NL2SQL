@@ -35,10 +35,10 @@ vectorstore = Chroma(
 )
 
 llm = ChatOpenAI(
-    model="kimi-k2.6",              
-    api_key="sk-UxUGtzMoxteqxA748vLW7gQta1jk7R8br5Und36RH9Qo05bD",
-    base_url="https://api.moonshot.cn/v1",
-    temperature=1
+    model="LongCat-Flash-Chat",              
+    api_key="ak_2Ni8wX3x431J2lj0WX9lz3ME3No1x",
+    base_url="https://api.longcat.chat/openai/v1",
+    temperature=0.3
 )
 
 vision_client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")

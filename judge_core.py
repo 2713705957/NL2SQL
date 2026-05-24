@@ -13,10 +13,10 @@ from langchain_openai import ChatOpenAI
 from nl2sql_loader import get_db_connection
 
 llm = ChatOpenAI(
-    model="kimi-k2.6",              
-    api_key="sk-UxUGtzMoxteqxA748vLW7gQta1jk7R8br5Und36RH9Qo05bD",
-    base_url="https://api.moonshot.cn/v1",
-    temperature=1
+    model="LongCat-Flash-Chat",              
+    api_key="ak_2Ni8wX3x431J2lj0WX9lz3ME3No1x",
+    base_url="https://api.longcat.chat/openai/v1",
+    temperature=0.3
 )
 
 # ---------- 安全执行 ----------
@@ -294,39 +294,3 @@ def build_follow_up_prompt(
         previous_feedback=previous_feedback,
         follow_up_question=follow_up_question,
     )
-
-
-# ---------- 简单测试 ----------
-if __name__ == "__main__":
-    from nl2sql_loader import load_question_by_id, get_db_connection, TRAIN_DB
-
-    print("=" * 60)
-    print("任务2 测试：判题核心模块")
-    print("=" * 60)
-
-    qinfo = load_question_by_id(0)
-    std_sql = qinfo["standard_sql"].replace("table_name", f"`{qinfo['table_schema']['name']}`")
-    user_sql = std_sql  # 先用正确答案测试
-
-    print(f"\n标准SQL: {std_sql}")
-    ok, res, cols = safe_execute_sql(std_sql, TRAIN_DB)
-    print(f"执行结果: ok={ok}, cols={cols}, rows={res[:3] if ok else res}")
-
-    # 比对
-    cmp = compare_results(res if ok else [], res if ok else [])
-    print(f"比对结果: {cmp}")
-
-    # 特征提取
-    features = extract_sql_features(std_sql, qinfo["table_schema"])
-    print(f"特征: {json.dumps(features, ensure_ascii=False)}")
-
-    # 语义等价（自己和自己比）
-    sem = semantic_equivalence_check(
-        qinfo["question"], user_sql, features, qinfo["table_schema"]
-    )
-    print(f"语义等价: {sem}")
-
-    # 反馈生成
-    err_info = {"has_error": not ok, "error_msg": res if not ok else "", "table_schema": qinfo["table_schema"]}
-    fb = generate_educational_feedback(qinfo["question"], user_sql, err_info, cmp)
-    print(f"反馈: {json.dumps(fb, ensure_ascii=False, indent=2)}")
